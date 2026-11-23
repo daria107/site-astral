@@ -3,13 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>АСТРАЛ 5: КРАСНАЯ ДВЕРЬ — Официальный сайт фильма</title>
+<title>АСТРАЛ 5: КРАСНАЯ ДВЕРЬ — Официальный фан-сайт</title>
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- Виньетка и шум для кинематографичности -->
+<div class="vignette"></div>
+<div class="noise-overlay"></div>
 
 <!-- Прелоадер -->
 <div class="preloader" id="preloader">
@@ -43,7 +47,7 @@
       «Некоторые двери открываются только изнутри.<br>
       Но за этой дверью — не ты».
     </p>
-    <div class="scroll-hint">▾ ЛИСТАЙТЕ ВНИЗ ▾</div>
+    <div class="scroll-hint" onclick="document.querySelector('#plot').scrollIntoView({behavior: 'smooth'})">▾ ЛИСТАЙТЕ ВНИЗ ▾</div>
   </div>
 
   <div class="wrap">
@@ -143,7 +147,7 @@
 <section class="page" id="chars">
   <div class="wrap">
     <h2 class="section-title">Персонажи <span>фильма</span></h2>
-    <p class="section-lead">Нажмите на карточку, чтобы узнать больше о герое.</p>
+    <p class="section-lead">Нажмите на карточку, чтобы узнать больше о герое. Но будьте осторожны: некоторые тайны лучше не знать.</p>
     <div class="chars" id="charsGrid"></div>
   </div>
 </section>
@@ -155,12 +159,15 @@
     <p class="section-lead">Загляни за грань. Но помни: дверь открывается в обе стороны.</p>
 
     <div class="interactive">
-
       <!-- Тест -->
       <div class="game-card">
         <h3>Тест: Готов ли ты войти в Астрал?</h3>
         <p class="desc">5 вопросов о фильме и о страхе. Ответы покажут, кем ты был бы в этой истории.</p>
-        <div id="quizContainer"></div>
+        <div id="quizContainer">
+          <button class="btn-start" id="startQuiz">Начать тест</button>
+          <div id="quizContent" class="hidden"></div>
+          <div id="quizResult" class="hidden"></div>
+        </div>
       </div>
 
       <!-- Красная дверь -->
@@ -178,7 +185,6 @@
         <div class="door-message" id="doorMessage">Нажми на дверь...</div>
         <div class="door-counter">Открытий: <span id="doorCount">0</span></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -195,7 +201,8 @@
 
 <footer>
   <div class="fname">АСТРАЛ <span>5</span></div>
-  <div>© 2024 · Мистический хоррор · Официальный фан-сайт</div>
+  <div>© 2023–2026 · Мистический хоррор · Официальный фан-сайт</div>
+  <div class="footer-warning">Сайт содержит мигающие элементы и пугающие эффекты.</div>
 </footer>
 
 <script src="script.js"></script>
