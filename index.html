@@ -3,206 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>АСТРАЛ 5: КРАСНАЯ ДВЕРЬ — Официальный фан-сайт</title>
+<title>АСТРАЛ 5: КРАСНАЯ ДВЕРЬ — Погружение в Бездну</title>
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Oswald:wght@300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Oswald:wght@300;500;700&family=Special+Elite&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- Виньетка и шум для кинематографичности -->
-<div class="vignette"></div>
+<!-- Кастомный курсор -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-outline" id="cursorOutline"></div>
+
+<!-- Эффект фонарика (скрытые шёпоты) -->
+<div class="flashlight-overlay" id="flashlight"></div>
+<div class="hidden-whispers">
+  <span style="top: 15%; left: 10%;">Оно видит тебя</span>
+  <span style="top: 45%; right: 5%;">Не оборачивайся</span>
+  <span style="top: 70%; left: 20%;">Мы уже внутри</span>
+  <span style="top: 30%; right: 15%;">Открой дверь</span>
+</div>
+
+<!-- Шум и виньетка -->
 <div class="noise-overlay"></div>
+<div class="vignette"></div>
 
 <!-- Прелоадер -->
 <div class="preloader" id="preloader">
   <div class="preloader-door">
     <div class="preloader-knob"></div>
   </div>
-  <div class="preloader-text">ОТКРЫВАЕМ ДВЕРЬ...</div>
+  <div class="preloader-text" data-scramble="ПРОНИКНОВЕНИЕ...">ПРОНИКНОВЕНИЕ...</div>
 </div>
 
-<!-- Частицы на фоне -->
 <canvas id="particles"></canvas>
 
 <!-- Навигация -->
 <nav id="nav">
-  <a href="#" data-page="home" class="active">Главная</a>
-  <a href="#" data-page="plot">Сюжет</a>
-  <a href="#" data-page="chars">Персонажи</a>
-  <a href="#" data-page="play">Интерактив</a>
+  <a href="#" data-page="home" class="active" data-scramble="ГЛАВНАЯ">ГЛАВНАЯ</a>
+  <a href="#" data-page="plot" data-scramble="НИСХОЖДЕНИЕ">НИСХОЖДЕНИЕ</a>
+  <a href="#" data-page="chars" data-scramble="ОБРЕЧЁННЫЕ">ОБРЕЧЁННЫЕ</a>
+  <a href="#" data-page="play" data-scramble="РИТУАЛ">РИТУАЛ</a>
 </nav>
 
 <!-- ============ ГЛАВНАЯ ============ -->
 <section class="page active" id="home">
   <div class="hero">
-    <div class="hero-fog"></div>
+    <div class="hero-fog fog-1"></div>
+    <div class="hero-fog fog-2"></div>
+    
     <div class="door-ornament">
       <div class="ornament-inner"></div>
+      <div class="ornament-glow"></div>
     </div>
-    <h1 class="glitch" data-text="АСТРАЛ">АСТРАЛ <span>5</span></h1>
-    <div class="sub">КРАСНАЯ ДВЕРЬ</div>
-    <p class="tagline">
+    
+    <h1 class="glitch-title" data-text="АСТРАЛ V">АСТРАЛ <span class="red-text">V</span></h1>
+    <div class="sub-title">КРАСНАЯ ДВЕРЬ</div>
+    
+    <p class="tagline scramble-text">
       «Некоторые двери открываются только изнутри.<br>
-      Но за этой дверью — не ты».
+      Но за этой дверью — уже не ты».
     </p>
-    <div class="scroll-hint" onclick="document.querySelector('#plot').scrollIntoView({behavior: 'smooth'})">▾ ЛИСТАЙТЕ ВНИЗ ▾</div>
+    
+    <div class="scroll-hint" onclick="document.querySelector('#plot').scrollIntoView({behavior: 'smooth'})">
+      <span class="arrow">↓</span>
+      <span class="text">Спуститься в Бездну</span>
+    </div>
   </div>
 
   <div class="wrap">
-    <div class="quote-block">
-      <blockquote>«Тьма не приходит извне. Она всегда была внутри.<br>
-      Просто раньше у неё не было двери».</blockquote>
-      <cite>— из официального синопсиса</cite>
-    </div>
-
-    <div class="plot">
-      <div class="plot-text">
-        <p class="drop">Прошло десять лет с тех пор, как семья Ламберт в последний раз сталкивалась с тем, что живёт по ту сторону сна. Джош вырос. Далтон вырос. Но <strong>Красная дверь</strong> — та самая, из детских кошмаров — никуда не исчезла.</p>
-        <p>Она просто ждала. И теперь, когда Далтон поступает в колледж, прошлое возвращается: сначала — сны, потом — голоса, потом — <strong>лица</strong>. Чтобы закрыть дверь навсегда, семье придётся снова войти в Астрал — но на этот раз выйти может не каждый.</p>
-        <p class="plot-tagline">«Астрал 5: Красная дверь» — это фильм о том,<br>что мы наследуем от своих страхов.</p>
-      </div>
-      <div class="plot-visual">
-        <div class="red-door">
-          <div class="door-knob"></div>
-          <div class="door-glow"></div>
-          <div class="door-shadow"></div>
-        </div>
-        <div class="label">● ДВЕРЬ ЖДЁТ ●</div>
-      </div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat">
-        <div class="stat-num" data-count="10">0</div>
-        <div class="stat-label">лет ожидания</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="3">0</div>
-        <div class="stat-label">двери</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" data-count="1">0</div>
-        <div class="stat-label">выход</div>
-      </div>
+    <div class="quote-block reveal-on-scroll">
+      <blockquote>«Тьма не приходит извне. Она всегда была внутри.<br>Просто раньше у неё не было двери».</blockquote>
+      <cite>— Архивы семьи Ламберт</cite>
     </div>
   </div>
 </section>
 
-<!-- ============ СЮЖЕТ ============ -->
+<!-- ============ СЮЖЕТ (Вертикальный таймлайн) ============ -->
 <section class="page" id="plot">
-  <div class="wrap">
-    <h2 class="section-title">Сюжет <span>фильма</span></h2>
-    <p class="section-lead">Три главы одной истории — от первого сна до последнего взгляда за дверь.</p>
+  <div class="wrap timeline-wrap">
+    <h2 class="section-title reveal-on-scroll">Путь <span class="red-text">Вниз</span></h2>
+    <p class="section-lead reveal-on-scroll">Три стадии погружения. Чем глубже ты идёшь, тем сложнее вернуться.</p>
 
-    <div class="plot">
-      <div class="plot-text">
-        <p class="drop">Глава I. Сон.</p>
-        <p><strong>Далтон Ламберт</strong>, 18-летний студент, начинает видеть сон, который не может контролировать: длинный коридор, красная дверь в конце и голос, который зовёт его по имени. Голос он узнаёт — это голос отца в детстве.</p>
-        <p><strong>Джош</strong>, его отец, давно не говорит об Астрале. Но когда Далтон рассказывает ему о двери, он бледнеет. «Ты не должен был её видеть. Я закрыл её. Двадцать лет назад».</p>
-      </div>
-      <div class="plot-visual">
-        <div class="red-door small">
-          <div class="door-knob"></div>
-          <div class="door-glow"></div>
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      
+      <!-- Глава 1 -->
+      <div class="timeline-item reveal-on-scroll">
+        <div class="timeline-node">I</div>
+        <div class="timeline-content">
+          <h3>Стадия 1: Эхо</h3>
+          <p>Далтон Ламберт, 18 лет. Университетская общага. Сначала это просто сон: длинный коридор, запах старой краски и красная дверь в конце. Голос, зовущий его, принадлежит его отцу, но звучит так, будто идёт из-под земли.</p>
+          <div class="timeline-visual">
+            <div class="css-art music-box"></div>
+            <span class="visual-label">Слышишь мелодию?</span>
+          </div>
         </div>
-        <div class="label">ГЛАВА I — СОН</div>
       </div>
-    </div>
 
-    <div class="plot reverse">
-      <div class="plot-text">
-        <p class="drop">Глава II. Дверь.</p>
-        <p><strong>Элис</strong>, жена Джоша и медиум, понимает: дверь не закрыта. Она лишь приоткрыта — и то, что за ней, уже проникло в дом. Семья собирается вместе, чтобы провести ритуал возвращения. Но ритуал требует, чтобы каждый вошёл в свой сон.</p>
-        <p>И у каждого — своя дверь. У Далтона — красная. У Джоша — чёрная. У Элис — та, которую она не должна была видеть никогда.</p>
-      </div>
-      <div class="plot-visual">
-        <div class="red-door small dark">
-          <div class="door-knob"></div>
-          <div class="door-glow"></div>
+      <!-- Глава 2 -->
+      <div class="timeline-item reverse reveal-on-scroll">
+        <div class="timeline-node">II</div>
+        <div class="timeline-content">
+          <h3>Стадия 2: Разлом</h3>
+          <p>Джош понимает, что печать, которую он наложил 10 лет назад, разрушена. Элис чувствует холодные пятна в доме. Тени начали двигаться независимо от источника света. Чтобы спасти сына, они должны провести запрещённый ритуал синхронизации снов.</p>
+          <div class="timeline-visual">
+            <div class="css-art cracked-mirror"></div>
+            <span class="visual-label">Отражение лжёт</span>
+          </div>
         </div>
-        <div class="label">ГЛАВА II — ДВЕРЬ</div>
       </div>
-    </div>
 
-    <div class="plot">
-      <div class="plot-text">
-        <p class="drop">Глава III. Лицо.</p>
-        <p>В финале семья входит в Астрал вместе. Красная дверь открывается — и за ней не пустота. За ней <strong>он</strong>. Тот, кто всё это время ждал, чтобы вернуться. И теперь у него есть лицо, которое они знают.</p>
-        <p>Чтобы закрыть дверь, кому-то придётся остаться снаружи. Или — внутри.</p>
-      </div>
-      <div class="plot-visual">
-        <div class="red-door small pulse">
-          <div class="door-knob"></div>
-          <div class="door-glow"></div>
+      <!-- Глава 3 -->
+      <div class="timeline-item reveal-on-scroll">
+        <div class="timeline-node">III</div>
+        <div class="timeline-content">
+          <h3>Стадия 3: Лицо Бездны</h3>
+          <p>Астрал больше не серый. Он окрашен в цвет крови. Дверь открывается, и за ней стоит не Паркер Крейн. За ней стоит тот, кто носит лицо, которое они любят больше всего. Чтобы закрыть дверь, нужно принести жертву. Кто останется по ту сторону?</p>
+          <div class="timeline-visual">
+            <div class="css-art bleeding-door"></div>
+            <span class="visual-label">Уже поздно</span>
+          </div>
         </div>
-        <div class="label">ГЛАВА III — ЛИЦО</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ ПЕРСОНАЖИ ============ -->
+<!-- ============ ПЕРСОНАЖИ (Карты Таро) ============ -->
 <section class="page" id="chars">
   <div class="wrap">
-    <h2 class="section-title">Персонажи <span>фильма</span></h2>
-    <p class="section-lead">Нажмите на карточку, чтобы узнать больше о герое. Но будьте осторожны: некоторые тайны лучше не знать.</p>
-    <div class="chars" id="charsGrid"></div>
+    <h2 class="section-title reveal-on-scroll">Обречённые <span class="red-text">Души</span></h2>
+    <p class="section-lead reveal-on-scroll">Наведите на карту, чтобы узнать истинную суть. Но помните: знание — это проклятие.</p>
+    
+    <div class="tarot-grid" id="charsGrid">
+      <!-- Генерируется через JS -->
+    </div>
   </div>
 </section>
 
 <!-- ============ ИНТЕРАКТИВ ============ -->
 <section class="page" id="play">
   <div class="wrap">
-    <h2 class="section-title">Интерактив <span>с фильмом</span></h2>
-    <p class="section-lead">Загляни за грань. Но помни: дверь открывается в обе стороны.</p>
-
-    <div class="interactive">
-      <!-- Тест -->
-      <div class="game-card">
-        <h3>Тест: Готов ли ты войти в Астрал?</h3>
-        <p class="desc">5 вопросов о фильме и о страхе. Ответы покажут, кем ты был бы в этой истории.</p>
-        <div id="quizContainer">
-          <button class="btn-start" id="startQuiz">Начать тест</button>
-          <div id="quizContent" class="hidden"></div>
-          <div id="quizResult" class="hidden"></div>
+    <h2 class="section-title reveal-on-scroll">Ритуал <span class="red-text">Связи</span></h2>
+    
+    <div class="interactive-grid">
+      
+      <!-- Интерактив 1: Духовная коробка -->
+      <div class="game-card spirit-box-card reveal-on-scroll">
+        <h3>📻 Духовная Коробка (Spirit Box)</h3>
+        <p class="desc">Двигайте ползунок, чтобы настроить частоту Астрала. Найдите правильную волну, чтобы услышать послание.</p>
+        <div class="spirit-box-ui">
+          <div class="frequency-display" id="freqDisplay">00.0 MHz</div>
+          <input type="range" min="0" max="100" value="0" class="freq-slider" id="freqSlider">
+          <div class="spirit-message" id="spiritMessage">Настройте частоту...</div>
         </div>
       </div>
 
-      <!-- Красная дверь -->
-      <div class="game-card door-game">
-        <h3>Красная дверь</h3>
-        <p class="desc">Нажми на дверь, чтобы открыть её. Но будь осторожен: за ней — не всегда пустота.</p>
-        <div class="door-stage">
-          <div class="big-door" id="bigDoor">
-            <div class="knob"></div>
-            <div class="door-light"></div>
-            <div class="door-face" id="doorFace">?</div>
-            <div class="door-whisper" id="doorWhisper"></div>
+      <!-- Интерактив 2: Красная Дверь (с фонариком) -->
+      <div class="game-card door-game-card reveal-on-scroll">
+        <h3>🚪 Красная Дверь</h3>
+        <p class="desc">Нажимайте на дверь. Но будьте осторожны: с каждым разом она открывается всё шире, а тьма становится голоднее.</p>
+        <div class="door-stage-3d">
+          <div class="big-door-3d" id="bigDoor3d">
+            <div class="door-panel left"></div>
+            <div class="door-panel right"></div>
+            <div class="door-knob-3d"></div>
+            <div class="door-abyss" id="doorAbyss">
+              <div class="abyss-eyes" id="abyssEyes">👁️ 👁️</div>
+            </div>
           </div>
         </div>
-        <div class="door-message" id="doorMessage">Нажми на дверь...</div>
-        <div class="door-counter">Открытий: <span id="doorCount">0</span></div>
+        <div class="door-message-3d" id="doorMessage3d">Дверь заперта. Постучите.</div>
+        <div class="door-counter-3d">Прикосновений: <span id="doorCount3d">0</span>/7</div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- Модалка персонажа -->
-<div class="modal" id="charModal">
-  <div class="modal-box">
-    <span class="close" id="modalClose">&times;</span>
-    <h2 id="modalName"></h2>
-    <div class="role" id="modalRole"></div>
-    <div id="modalBody"></div>
-  </div>
-</div>
-
 <footer>
-  <div class="fname">АСТРАЛ <span>5</span></div>
-  <div>© 2023–2026 · Мистический хоррор · Официальный фан-сайт</div>
-  <div class="footer-warning">Сайт содержит мигающие элементы и пугающие эффекты.</div>
+  <div class="fname">АСТРАЛ <span class="red-text">V</span></div>
+  <div>© 2024–2026 · Фанатский проект · Не для слабонервных</div>
+  <div class="footer-warning">⚠ Сайт содержит мерцающие элементы, резкие звуки (визуальные) и пугающие образы.</div>
 </footer>
 
 <script src="script.js"></script>
