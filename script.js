@@ -1,10 +1,114 @@
-// ==================== ПРЕЛОАДЕР ====================
+// ==================== КАСТОМНЫЙ КУРСОР И ФОНАРИК ====================
+const cursorDot = document.getElementById('cursorDot');
+const cursorOutline = document.getElementById('cursorOutline');
+const flashlight = document.getElementById('flashlight');
+
+window.addEventListener('mousemove', (e) => {
+  const posX = e.clientX;
+  const posY = e.clientY;
+
+  // Курсор
+  cursorDot.style.left = `${posX}px`;
+  cursorDot.style.top = `${posY}px`;
+  
+  // Плавное следование обводки
+  cursorOutline.animate({
+    left: `${posX}px`,
+    top: `${posY}px`
+  }, { duration: 500, fill: "forwards" });
+
+  // Фонарик
+  flashlight.style.setProperty('--x', `${posX}px`);
+  flashlight.style.setProperty('--y', `${posY}px`);
+});
+
+// Эффект при наведении на интерактивные элементы
+const hoverables = document.querySelectorAll('a, button, .tarot-card, .big-door-3d, .freq-slider');
+hoverables.forEach(el => {
+  el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+  el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+});
+
+// Активация фонарика при скролле
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 300) {
+    document.body.classList.add('scrolled');
+  } else {
+    document.body.classList.remove('scrolled');
+  }
+});
+
+// ==================== ПРЕЛОАДЕР И SCRAMBLE ЭФФЕКТ ====================
+class TextScramble {
+  constructor(el) {
+    this.el = el;
+    this.chars = '!<>-_\\/[]{}—=+*^?#________';
+    this.update = this.update.bind(this);
+  }
+  setText(newText) {
+    const oldText = this.el.innerText;
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise((resolve) => this.resolve = resolve);
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      const start = Math.floor(Math.random() * 40);
+      const end = start + Math.floor(Math.random() * 40);
+      this.queue.push({ from, to, start, end });
+    }
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+  update() {
+    let output = '';
+    let complete = 0;
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      if (this.frame >= end) {
+        complete++;
+        output += to;
+      } else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) {
+          char = this.randomChar();
+          this.queue[i].char = char;
+        }
+        output += `<span class="red-text">${char}</span>`;
+      } else {
+        output += from;
+      }
+    }
+    this.el.innerHTML = output;
+    if (complete === this.queue.length) {
+      this.resolve();
+    } else {
+      this.frameRequest = requestAnimationFrame(this.update);
+      this.frame++;
+    }
+  }
+  randomChar() {
+    return this.chars[Math.floor(Math.random() * this.chars.length)];
+  }
+}
+
+// Применяем scramble к элементам с атрибутом data-scramble
+document.querySelectorAll('[data-scramble]').forEach(el => {
+  const fx = new TextScramble(el);
+  const originalText = el.getAttribute('data-scramble');
+  
+  el.addEventListener('mouseenter', () => {
+    fx.setText(originalText);
+  });
+});
+
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('preloader').classList.add('hidden');
     initParticles();
-    animateStats();
-  }, 2000);
+    initScrollReveal();
+  }, 2500);
 });
 
 // ==================== НАВИГАЦИЯ ====================
@@ -22,10 +126,13 @@ navLinks.forEach(link => {
     pages.forEach(page => {
       page.classList.remove('active');
       if (page.id === targetPage) {
-        setTimeout(() => page.classList.add('active'), 100);
+        setTimeout(() => {
+          page.classList.add('active');
+          // Перезапуск анимаций скролла для новой страницы
+          initScrollReveal(); 
+        }, 100);
       }
     });
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
@@ -38,16 +145,14 @@ function initParticles() {
   canvas.height = window.innerHeight;
 
   const particlesArray = [];
-  const numberOfParticles = 100;
-
   class Particle {
     constructor() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.size = Math.random() * 2 + 0.5;
-      this.speedX = Math.random() * 0.5 - 0.25;
-      this.speedY = Math.random() * 0.5 - 0.25;
-      this.color = Math.random() > 0.8 ? 'rgba(138, 3, 3, 0.6)' : 'rgba(100, 100, 100, 0.3)';
+      this.size = Math.random() * 2;
+      this.speedX = Math.random() * 0.4 - 0.2;
+      this.speedY = Math.random() * 0.4 - 0.2;
+      this.color = Math.random() > 0.9 ? 'rgba(255, 0, 60, 0.4)' : 'rgba(100, 100, 100, 0.2)';
     }
     update() {
       this.x += this.speedX;
@@ -65,9 +170,7 @@ function initParticles() {
     }
   }
 
-  for (let i = 0; i < numberOfParticles; i++) {
-    particlesArray.push(new Particle());
-  }
+  for (let i = 0; i < 120; i++) particlesArray.push(new Particle());
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -85,213 +188,143 @@ function initParticles() {
   });
 }
 
-// ==================== АНИМАЦИЯ СТАТИСТИКИ ====================
-function animateStats() {
-  const stats = document.querySelectorAll('.stat-num');
-  stats.forEach(stat => {
-    const target = +stat.getAttribute('data-count');
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    let current = 0;
-    
-    const updateCount = () => {
-      current += increment;
-      if (current < target) {
-        stat.innerText = Math.ceil(current);
-        requestAnimationFrame(updateCount);
-      } else {
-        stat.innerText = target;
-      }
-    };
-    
-    // Запуск при прокрутке
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        updateCount();
-        observer.disconnect();
+// ==================== SCROLL REVEAL ====================
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
       }
     });
-    observer.observe(stat);
-  });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 }
 
-// ==================== ПЕРСОНАЖИ ====================
+// ==================== ПЕРСОНАЖИ (ТАРО) ====================
 const characters = [
   {
     name: "Далтон Ламберт",
-    role: "Студент / Ключ",
-    body: "Теперь ему 18 лет. Он пытается забыть детские кошмары, но Красная дверь возвращается в его снах. Его способность к астральным проекциям усиливается, делая его главной мишенью."
+    role: "Ключ",
+    icon: "🗝️",
+    desc: "18 лет. Его разум — мост между мирами. Он думал, что избавился от демонов, но они просто научились притворяться его воспоминаниями.",
+    secret: "Секрет: Он уже не просыпается по-настоящему."
   },
   {
     name: "Джош Ламберт",
-    role: "Отец / Бывший проводник",
-    body: "Он поклялся никогда больше не входить в Астрал. Но когда его сын оказывается в опасности, Джош вынужден признать: тьма, живущая в нём, никогда не уходила. Она просто ждала."
+    role: "Проводник",
+    icon: "🕯️",
+    desc: "Отец, нарушивший клятву. Его связь с Астралом глубже, чем он признаёт. Тьма в нём не спит, она ждала подходящего момента.",
+    secret: "Секрет: Он слышит шёпот даже днём."
   },
   {
     name: "Ренай Ламберт",
-    role: "Мать / Якорь",
-    body: "Единственная, кто всегда возвращал их обратно. Теперь она должна удерживать семью вместе, когда реальность начинает рушиться, а границы между мирами стираются."
+    role: "Якорь",
+    icon: "⚓",
+    desc: "Единственная сила, удерживающая семью в реальности. Её интуиция обострилась до боли, она чувствует холод за секунду до появления призрака.",
+    secret: "Секрет: Она видит мёртвых в отражениях."
   },
   {
-    name: "Паркер Крейн",
-    role: "Зло / Красное лицо",
-    body: "Он не исчез. Он терпелив. Он знает все их страхи, все их воспоминания. И он знает, что рано или поздно кто-то из них снова откроет дверь. Изнутри."
+    name: "Сущность",
+    role: "Хозяин Двери",
+    icon: "👁️",
+    desc: "Оно не имеет имени. Оно питается страхом привязанности. Оно носит лица тех, кого вы любите, чтобы вы открыли дверь добровольно.",
+    secret: "Секрет: Оно уже находится в комнате."
   }
 ];
 
 const charsGrid = document.getElementById('charsGrid');
-characters.forEach((char, index) => {
+characters.forEach(char => {
   const card = document.createElement('div');
-  card.className = 'char-card';
-  card.innerHTML = `<h3>${char.name}</h3><div class="role">${char.role}</div>`;
-  card.addEventListener('click', () => openModal(char));
+  card.className = 'tarot-card';
+  card.innerHTML = `
+    <div class="tarot-front">
+      <div class="tarot-icon">${char.icon}</div>
+      <div class="tarot-name">${char.name}</div>
+      <div class="tarot-role">${char.role}</div>
+    </div>
+    <div class="tarot-back">
+      <h4>Истинная Суть</h4>
+      <p>${char.desc}</p>
+      <div class="tarot-secret">${char.secret}</div>
+    </div>
+  `;
   charsGrid.appendChild(card);
 });
 
-const modal = document.getElementById('charModal');
-const modalClose = document.getElementById('modalClose');
-
-function openModal(char) {
-  document.getElementById('modalName').innerText = char.name;
-  document.getElementById('modalRole').innerText = char.role;
-  document.getElementById('modalBody').innerHTML = `<p>${char.body}</p>`;
-  modal.classList.add('active');
-}
-
-modalClose.addEventListener('click', () => modal.classList.remove('active'));
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) modal.classList.remove('active');
-});
-
-// ==================== КВИЗ ====================
-const quizData = [
-  { q: "Ты слышишь шёпот, когда остаёшься один в тишине?", options: ["Да, постоянно", "Иногда", "Никогда"] },
-  { q: "Какой цвет ты видишь, закрывая глаза?", options: ["Красный", "Чёрный", "Белый"] },
-  { q: "Ты помнишь свои детские кошмары?", options: ["Слишком хорошо", "Смутно", "Нет"] },
-  { q: "Если бы ты вошёл в Астрал, что бы ты взял с собой?", options: ["Фотографию семьи", "Ничего", "Зеркало"] },
-  { q: "Ты чувствуешь присутствие кого-то в комнате прямо сейчас?", options: ["Да", "Нет", "Не хочу отвечать"] }
-];
-
-let currentQuestion = 0;
-let score = 0;
-
-document.getElementById('startQuiz').addEventListener('click', () => {
-  document.getElementById('startQuiz').classList.add('hidden');
-  document.getElementById('quizContent').classList.remove('hidden');
-  showQuestion();
-});
-
-function showQuestion() {
-  const container = document.getElementById('quizContent');
-  if (currentQuestion >= quizData.length) {
-    showResult();
-    return;
-  }
-  
-  const q = quizData[currentQuestion];
-  let html = `<div class="quiz-question">${currentQuestion + 1}. ${q.q}</div><div class="quiz-options">`;
-  
-  q.options.forEach(opt => {
-    html += `<button class="quiz-option" onclick="answerQuiz('${opt}')">${opt}</button>`;
-  });
-  html += `</div>`;
-  container.innerHTML = html;
-}
-
-function answerQuiz(ans) {
-  if (ans === "Да, постоянно" || ans === "Красный" || ans === "Слишком хорошо" || ans === "Зеркало" || ans === "Да") {
-    score += 2;
-  } else if (ans === "Иногда" || ans === "Чёрный" || ans === "Смутно" || ans === "Фотографию семьи") {
-    score += 1;
-  }
-  currentQuestion++;
-  showQuestion();
-}
-
-function showResult() {
-  document.getElementById('quizContent').classList.add('hidden');
-  const resultDiv = document.getElementById('quizResult');
-  resultDiv.classList.remove('hidden');
-  
-  let resultText = "";
-  if (score >= 8) {
-    resultText = "Ты уже в Астрале. Оно знает твоё имя.";
-  } else if (score >= 5) {
-    resultText = "Ты — Проводник. Ты чувствуешь грань, но ещё можешь вернуться.";
-  } else {
-    resultText = "Ты — Хранитель. Твой разум защищён, но не надолго.";
-  }
-  
-  resultDiv.innerHTML = `<div class="quiz-result">${resultText}</div><button class="btn-start" onclick="location.reload()" style="margin-top:20px;">Пройти снова</button>`;
-}
-
-// ==================== ИГРА С КРАСНОЙ ДВЕРЬЮ ====================
-let doorClicks = 0;
-const bigDoor = document.getElementById('bigDoor');
-const doorMessage = document.getElementById('doorMessage');
-const doorCount = document.getElementById('doorCount');
-const doorFace = document.getElementById('doorFace');
+// ==================== ИНТЕРАКТИВ 1: SPIRIT BOX ====================
+const freqSlider = document.getElementById('freqSlider');
+const freqDisplay = document.getElementById('freqDisplay');
+const spiritMessage = document.getElementById('spiritMessage');
 
 const creepyMessages = [
-  "Дверь заперта.",
-  "Слышен шёпот...",
-  "Оно знает твоё имя.",
-  "Не оборачивайся.",
-  "ТЫ УЖЕ ВНУТРИ.",
-  "ПОМОГИТЕ МНЕ",
-  "ОНО СМОТРИТ ЧЕРЕЗ ПЛЕЧО"
+  "Я вижу тебя...", "Помоги мне", "Оно здесь", "Не закрывай глаза", 
+  "Холодно...", "Мы ждём", "Обернись", "Дверь открыта"
 ];
 
-const creepyFaces = ["?", "☠", "👁", "◉", "҉", "X"];
-
-bigDoor.addEventListener('click', () => {
-  doorClicks++;
-  doorCount.innerText = doorClicks;
+freqSlider.addEventListener('input', (e) => {
+  const val = e.target.value;
+  // Генерируем "шумящую" частоту
+  const freq = (val * 0.88 + Math.random() * 2).toFixed(1);
+  freqDisplay.innerText = `${freq} MHz`;
   
-  // Эффект тряски
-  bigDoor.classList.add('shake');
-  setTimeout(() => bigDoor.classList.remove('shake'), 500);
+  // Эффект помех
+  freqDisplay.style.opacity = 0.5 + Math.random() * 0.5;
   
-  // Изменение сообщения
-  if (doorClicks <= creepyMessages.length) {
-    doorMessage.innerText = creepyMessages[doorClicks - 1];
+  // Если частота близка к "нужной" (например, кратно 15 или 100)
+  if (val % 15 === 0 || val == 100) {
+    spiritMessage.classList.add('active');
+    const msg = creepyMessages[Math.floor(Math.random() * creepyMessages.length)];
+    spiritMessage.innerText = msg;
+    
+    // Визуальный глитч экрана
+    document.body.style.transform = `translateX(${Math.random() * 4 - 2}px)`;
+    setTimeout(() => document.body.style.transform = 'none', 100);
   } else {
-    doorMessage.innerText = "ДВЕРЬ БОЛЬШЕ НЕ ОТКРОЕТСЯ. ПОЗДНО.";
-    doorMessage.style.color = "#ff0000";
-    doorMessage.style.textShadow = "0 0 10px red";
-  }
-  
-  // Изменение лица на двери
-  if (doorClicks > 2) {
-    const faceIndex = Math.min(Math.floor((doorClicks - 2) / 2), creepyFaces.length - 1);
-    doorFace.innerText = creepyFaces[faceIndex];
-    doorFace.style.color = doorClicks > 5 ? "#ff0000" : "rgba(0,0,0,0.5)";
-  }
-  
-  // Скример-эффект на 7-м клике
-  if (doorClicks === 7) {
-    document.body.style.animation = "shake 0.5s cubic-bezier(.36,.07,.19,.97) both";
-    document.querySelector('.vignette').style.background = "radial-gradient(circle, rgba(255,0,0,0.2) 0%, rgba(0,0,0,0.9) 100%)";
-    setTimeout(() => {
-      document.body.style.animation = "";
-      document.querySelector('.vignette').style.background = "radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%)";
-    }, 500);
+    spiritMessage.classList.remove('active');
+    spiritMessage.innerText = "Только белый шум...";
   }
 });
 
-// ==================== ГЛИТЧ ЭФФЕКТ ПРИ ДВИЖЕНИИ МЫШИ ====================
-document.addEventListener('mousemove', (e) => {
-  if (Math.random() > 0.98) {
-    const glitch = document.createElement('div');
-    glitch.style.position = 'fixed';
-    glitch.style.left = e.clientX + 'px';
-    glitch.style.top = e.clientY + 'px';
-    glitch.style.width = '20px';
-    glitch.style.height = '2px';
-    glitch.style.background = 'var(--bright-red)';
-    glitch.style.pointerEvents = 'none';
-    glitch.style.zIndex = '9999';
-    document.body.appendChild(glitch);
-    setTimeout(() => glitch.remove(), 100);
+// ==================== ИНТЕРАКТИВ 2: 3D КРАСНАЯ ДВЕРЬ ====================
+let doorClicks = 0;
+const bigDoor3d = document.getElementById('bigDoor3d');
+const doorMessage3d = document.getElementById('doorMessage3d');
+const doorCount3d = document.getElementById('doorCount3d');
+
+const doorStates = [
+  "Дверь заперта. Постучите.",
+  "Слышен скрежет изнутри...",
+  "Щель расширяется. Тянет холодом.",
+  "ТЫ УЖЕ ВНУТРИ.",
+  "ОНО СМОТРИТ НА ТЕБЯ.",
+  "ПОЗДНО. ДВЕРЬ НЕ ЗАКРОЕТСЯ.",
+  "ДОБРО ПОЖАЛОВАТЬ ДОМОЙ."
+];
+
+bigDoor3d.addEventListener('click', () => {
+  if (doorClicks >= 6) return; // Максимум открытий
+  
+  doorClicks++;
+  doorCount3d.innerText = doorClicks;
+  
+  // Убираем предыдущие классы открытия
+  bigDoor3d.classList.remove('open-1', 'open-2', 'open-3');
+  
+  // Добавляем новый уровень открытия
+  if (doorClicks <= 2) bigDoor3d.classList.add('open-1');
+  else if (doorClicks <= 4) bigDoor3d.classList.add('open-2');
+  else bigDoor3d.classList.add('open-3');
+  
+  // Обновляем текст
+  doorMessage3d.innerText = doorStates[doorClicks];
+  doorMessage3d.style.color = doorClicks >= 4 ? 'var(--neon-red)' : 'var(--ash-gray)';
+  
+  // Эффект тряски на 5-м клике
+  if (doorClicks === 5) {
+    document.querySelector('.door-game-card').style.animation = 'shake 0.5s';
+    setTimeout(() => {
+      document.querySelector('.door-game-card').style.animation = '';
+    }, 500);
   }
 });
